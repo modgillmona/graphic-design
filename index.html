@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lata Devi — Graphic Designer</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#08080b',
+          surface: '#111116',
+          surface2: '#191922',
+          hair: '#26262f',
+          violet: {
+            DEFAULT: '#a742ff',
+            soft: '#c084fc',
+            deep: '#5b21b6',
+            glow: '#b026ff'
+          }
+        },
+        fontFamily: {
+          display: ['Space Grotesk', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #08080b; }
+
+  .grain::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .glow-text{
+    background: linear-gradient(180deg, #ffffff 0%, #d7b4ff 55%, #a742ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 30px rgba(167,66,255,.35));
+  }
+
+  .bg-blob{
+    background: radial-gradient(circle at 30% 30%, rgba(167,66,255,.35), transparent 60%);
+    filter: blur(60px);
+  }
+
+  /* crop-mark frame — signature motif referencing print registration marks */
+  .crop-frame{ position: relative; }
+  .crop-frame::before, .crop-frame::after,
+  .crop-frame .cm-tr, .crop-frame .cm-bl{
+    content:""; position:absolute; width:22px; height:22px;
+    border-color:#a742ff; opacity:.9; transition: all .4s ease;
+  }
+  .crop-frame::before{ top:-10px; left:-10px; border-top:2px solid; border-left:2px solid; }
+  .crop-frame::after{ bottom:-10px; right:-10px; border-bottom:2px solid; border-right:2px solid; }
+  .crop-frame .cm-tr{ top:-10px; right:-10px; border-top:2px solid; border-right:2px solid; }
+  .crop-frame .cm-bl{ bottom:-10px; left:-10px; border-bottom:2px solid; border-left:2px solid; }
+
+  .card-crop::before, .card-crop::after, .card-crop .cm-tr, .card-crop .cm-bl{ opacity:0; }
+  .card-crop:hover::before, .card-crop:hover::after,
+  .card-crop:hover .cm-tr, .card-crop:hover .cm-bl{ opacity:1; }
+
+  .fade-up{ opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .fade-up.in{ opacity:1; transform: translateY(0); }
+
+  .field:focus-within{ border-color:#a742ff; box-shadow:0 0 0 3px rgba(167,66,255,.18); }
+
+  ::selection{ background:#a742ff; color:#08080b; }
+
+  .pulse-dot{ animation: pulse 2s infinite; }
+  @keyframes pulse{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(167,66,255,.6); }
+    50%{ box-shadow: 0 0 0 6px rgba(167,66,255,0); }
+  }
+
+  .scrollbar-hide::-webkit-scrollbar{ display:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .fade-up{ transition:none; opacity:1; transform:none; }
+    .pulse-dot{ animation:none; }
+  }
+</style>
+</head>
+<body class="grain bg-ink text-white font-body antialiased overflow-x-hidden">
+
+<!-- NAV -->
+<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-ink/70 border-b border-hair">
+  <div class="max-w-7xl mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
+    <a href="#home" class="font-display font-semibold text-lg tracking-wide">
+      LATA <span class="text-violet">DEVI</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-10 font-mono text-xs uppercase tracking-widest text-white/70">
+      <a href="#home" class="hover:text-violet transition-colors">Home</a>
+      <a href="#portfolio" class="hover:text-violet transition-colors">Portfolio</a>
+      <a href="#about" class="hover:text-violet transition-colors">About</a>
+      <a href="#contact" class="hover:text-violet transition-colors">Contact</a>
+    </nav>
+    <a href="#contact" class="hidden md:inline-block font-mono text-xs uppercase tracking-widest border border-violet/60 text-violet px-5 py-2.5 rounded-full hover:bg-violet hover:text-ink transition-colors">
+      Hire Me
+    </a>
+    <button id="menuBtn" class="md:hidden w-9 h-9 flex flex-col justify-center items-center gap-1.5" aria-label="Open menu">
+      <span class="w-6 h-0.5 bg-white block"></span>
+      <span class="w-6 h-0.5 bg-white block"></span>
+      <span class="w-4 h-0.5 bg-white block self-end"></span>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<div id="mobileMenu" class="fixed inset-0 z-40 bg-ink/98 backdrop-blur-lg translate-x-full transition-transform duration-300 md:hidden">
+  <div class="h-full flex flex-col items-center justify-center gap-8 font-display text-3xl">
+    <a href="#home" class="mobile-link">Home</a>
+    <a href="#portfolio" class="mobile-link">Portfolio</a>
+    <a href="#about" class="mobile-link">About</a>
+    <a href="#contact" class="mobile-link">Contact</a>
+  </div>
+</div>
+
+<!-- HOME / HERO -->
+<section id="home" class="relative min-h-screen flex items-center pt-28 pb-20 px-6 md:px-10 overflow-hidden">
+  <div class="absolute -top-40 -left-40 w-[36rem] h-[36rem] bg-blob rounded-full"></div>
+  <div class="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-blob rounded-full opacity-60"></div>
+
+  <div class="relative max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 border border-hair rounded-full px-4 py-1.5 mb-8 font-mono text-[11px] uppercase tracking-widest text-white/60">
+        <span class="w-1.5 h-1.5 rounded-full bg-violet pulse-dot"></span>
+        Available for select projects
+      </div>
+      <h1 class="font-display font-semibold text-5xl sm:text-6xl lg:text-7xl leading-[1.02] glow-text">
+        Lata Devi
+      </h1>
+      <p class="mt-6 font-display text-xl sm:text-2xl text-white/85">
+        Graphic Designer &amp; Visual Storyteller
+      </p>
+      <p class="mt-5 text-white/55 max-w-md leading-relaxed">
+        I design brand identities, editorial layouts, and digital experiences
+        that hold their edge in a crowded feed — built on clean systems,
+        confident type, and a little bit of glow.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href="#portfolio" class="px-7 py-3.5 bg-violet text-ink font-semibold rounded-full hover:bg-violet-soft transition-colors">
+          View Portfolio
+        </a>
+        <a href="#contact" class="px-7 py-3.5 border border-white/25 rounded-full hover:border-violet hover:text-violet transition-colors">
+          Start a Project
+        </a>
+      </div>
+    </div>
+
+    <div class="fade-up flex justify-center md:justify-end">
+      <div class="crop-frame w-64 sm:w-80">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="rounded-2xl overflow-hidden border border-hair">
+          <img src="https://picsum.photos/seed/latadevi-portrait/600/720" alt="Portrait of Lata Devi at her design desk" class="w-full h-full object-cover grayscale contrast-125">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio" class="relative py-28 px-6 md:px-10 border-t border-hair">
+  <div class="max-w-7xl mx-auto">
+    <div class="fade-up flex items-end justify-between flex-wrap gap-4 mb-14">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-violet mb-3">Selected Work</p>
+        <h2 class="font-display text-3xl sm:text-4xl font-semibold">Portfolio</h2>
+      </div>
+      <p class="text-white/45 max-w-sm text-sm">Branding, packaging, editorial and digital design — a small cut of recent work.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card -->
+      <div class="fade-up card-crop crop-frame group cursor-pointer">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="relative rounded-xl overflow-hidden border border-hair aspect-[4/5]">
+          <img src="https://picsum.photos/seed/proj-orbit/600/750" alt="Orbit Coffee brand identity" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-violet-soft">Branding</p>
+            <p class="font-display text-lg font-medium">Orbit Coffee Co.</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up card-crop crop-frame group cursor-pointer">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="relative rounded-xl overflow-hidden border border-hair aspect-[4/5]">
+          <img src="https://picsum.photos/seed/proj-verve/600/751" alt="Verve magazine editorial layout" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-violet-soft">Editorial</p>
+            <p class="font-display text-lg font-medium">Verve Magazine</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up card-crop crop-frame group cursor-pointer">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="relative rounded-xl overflow-hidden border border-hair aspect-[4/5]">
+          <img src="https://picsum.photos/seed/proj-nova/600/752" alt="Nova skincare packaging design" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-violet-soft">Packaging</p>
+            <p class="font-display text-lg font-medium">Nova Skincare</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up card-crop crop-frame group cursor-pointer">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="relative rounded-xl overflow-hidden border border-hair aspect-[4/5]">
+          <img src="https://picsum.photos/seed/proj-fluxapp/600/753" alt="Flux app UI design" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-violet-soft">Digital / UI</p>
+            <p class="font-display text-lg font-medium">Flux Mobile App</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up card-crop crop-frame group cursor-pointer">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="relative rounded-xl overflow-hidden border border-hair aspect-[4/5]">
+          <img src="https://picsum.photos/seed/proj-monsoon/600/754" alt="Monsoon festival poster series" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-violet-soft">Poster</p>
+            <p class="font-display text-lg font-medium">Monsoon Festival</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up card-crop crop-frame group cursor-pointer">
+        <span class="cm-tr"></span><span class="cm-bl"></span>
+        <div class="relative rounded-xl overflow-hidden border border-hair aspect-[4/5]">
+          <img src="https://picsum.photos/seed/proj-atlas/600/755" alt="Atlas studio brand system" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-violet-soft">Brand System</p>
+            <p class="font-display text-lg font-medium">Atlas Studio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="relative py-28 px-6 md:px-10 border-t border-hair">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="fade-up crop-frame order-2 md:order-1 flex justify-center md:justify-start">
+      <div class="rounded-2xl overflow-hidden border border-hair w-64 sm:w-80">
+        <img src="https://picsum.photos/seed/latadevi-studio/600/700" alt="Lata Devi's design studio" class="w-full h-full object-cover grayscale contrast-125">
+      </div>
+    </div>
+
+    <div class="fade-up order-1 md:order-2">
+      <p class="font-mono text-xs uppercase tracking-widest text-violet mb-3">About</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-semibold mb-6">
+        Design that earns its place on the page.
+      </h2>
+      <p class="text-white/60 leading-relaxed mb-4">
+        I'm Lata Devi, a graphic designer based in Punjab working with brands,
+        publications and startups who want their visual identity to feel
+        considered — never generic. Over the last several years I've built
+        identity systems, packaging, editorial layouts and digital interfaces
+        for clients across India and beyond.
+      </p>
+      <p class="text-white/60 leading-relaxed mb-8">
+        My process starts with a real brief: audience, tone, constraints — then
+        moves into type, grid and colour. The result is design with a point of
+        view, built to hold up under scrutiny.
+      </p>
+
+      <div class="flex flex-wrap gap-3 mb-10">
+        <span class="px-4 py-2 rounded-full border border-hair font-mono text-xs text-white/70">Brand Identity</span>
+        <span class="px-4 py-2 rounded-full border border-hair font-mono text-xs text-white/70">Editorial Design</span>
+        <span class="px-4 py-2 rounded-full border border-hair font-mono text-xs text-white/70">Packaging</span>
+        <span class="px-4 py-2 rounded-full border border-hair font-mono text-xs text-white/70">UI / Digital</span>
+        <span class="px-4 py-2 rounded-full border border-hair font-mono text-xs text-white/70">Illustration</span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6 border-t border-hair pt-8">
+        <div>
+          <p class="font-display text-3xl font-semibold text-violet-soft">7+</p>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-white/45 mt-1">Years</p>
+        </div>
+        <div>
+          <p class="font-display text-3xl font-semibold text-violet-soft">120+</p>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-white/45 mt-1">Projects</p>
+        </div>
+        <div>
+          <p class="font-display text-3xl font-semibold text-violet-soft">40+</p>
+          <p class="font-mono text-[11px] uppercase tracking-widest text-white/45 mt-1">Clients</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="relative py-28 px-6 md:px-10 border-t border-hair bg-surface/40">
+  <div class="max-w-7xl mx-auto">
+    <div class="fade-up text-center mb-16">
+      <p class="font-mono text-xs uppercase tracking-widest text-violet mb-3">Client Words</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-semibold">What clients say</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="fade-up relative bg-surface border border-hair rounded-2xl p-8">
+        <span class="font-display text-6xl text-violet/20 absolute top-4 right-6 select-none">"</span>
+        <p class="text-white/70 leading-relaxed mb-8 relative">
+          Lata rebuilt our brand from the ground up. The identity feels sharp,
+          confident, and unmistakably ours — customers notice the difference.
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-violet-deep flex items-center justify-center font-display font-semibold">RK</div>
+          <div>
+            <p class="font-medium text-sm">Rohan Kapoor</p>
+            <p class="font-mono text-[11px] text-white/40">Founder, Orbit Coffee Co.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-up relative bg-surface border border-hair rounded-2xl p-8">
+        <span class="font-display text-6xl text-violet/20 absolute top-4 right-6 select-none">"</span>
+        <p class="text-white/70 leading-relaxed mb-8 relative">
+          Every layout she delivered for our magazine hit deadline and raised
+          the bar. She thinks in systems, not just single pages.
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-violet-deep flex items-center justify-center font-display font-semibold">SM</div>
+          <div>
+            <p class="font-medium text-sm">Simran Mehta</p>
+            <p class="font-mono text-[11px] text-white/40">Editor, Verve Magazine</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-up relative bg-surface border border-hair rounded-2xl p-8">
+        <span class="font-display text-6xl text-violet/20 absolute top-4 right-6 select-none">"</span>
+        <p class="text-white/70 leading-relaxed mb-8 relative">
+          Our packaging redesign directly moved sales. Lata asked the right
+          questions before touching a single pixel — rare and valuable.
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-violet-deep flex items-center justify-center font-display font-semibold">AV</div>
+          <div>
+            <p class="font-medium text-sm">Aditi Verma</p>
+            <p class="font-mono text-[11px] text-white/40">Co-founder, Nova Skincare</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="relative py-28 px-6 md:px-10 border-t border-hair">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
+    <div class="fade-up">
+      <p class="font-mono text-xs uppercase tracking-widest text-violet mb-3">Contact</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-semibold mb-6">Let's build something sharp.</h2>
+      <p class="text-white/60 leading-relaxed mb-10 max-w-sm">
+        Have a project in mind? Tell me a little about it and I'll get back
+        to you within two business days.
+      </p>
+
+      <div class="space-y-5 font-mono text-sm">
+        <div class="flex items-center gap-4">
+          <span class="w-9 h-9 rounded-full border border-hair flex items-center justify-center text-violet">@</span>
+          <span class="text-white/70">hello@latadevi.design</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="w-9 h-9 rounded-full border border-hair flex items-center justify-center text-violet">#</span>
+          <span class="text-white/70">+91 98765 43210</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="w-9 h-9 rounded-full border border-hair flex items-center justify-center text-violet">◎</span>
+          <span class="text-white/70">Punjab, India</span>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-10">
+        <a href="#" class="w-10 h-10 rounded-full border border-hair flex items-center justify-center hover:border-violet hover:text-violet transition-colors text-xs font-mono">IG</a>
+        <a href="#" class="w-10 h-10 rounded-full border border-hair flex items-center justify-center hover:border-violet hover:text-violet transition-colors text-xs font-mono">BE</a>
+        <a href="#" class="w-10 h-10 rounded-full border border-hair flex items-center justify-center hover:border-violet hover:text-violet transition-colors text-xs font-mono">LI</a>
+        <a href="#" class="w-10 h-10 rounded-full border border-hair flex items-center justify-center hover:border-violet hover:text-violet transition-colors text-xs font-mono">DR</a>
+      </div>
+    </div>
+
+    <div class="fade-up">
+      <form id="contactForm" class="space-y-5">
+        <div class="field border border-hair rounded-xl px-5 py-4 transition-colors">
+          <label class="block font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Name</label>
+          <input type="text" required placeholder="Your full name" class="w-full bg-transparent outline-none text-white placeholder:text-white/25">
+        </div>
+        <div class="field border border-hair rounded-xl px-5 py-4 transition-colors">
+          <label class="block font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Email</label>
+          <input type="email" required placeholder="you@email.com" class="w-full bg-transparent outline-none text-white placeholder:text-white/25">
+        </div>
+        <div class="field border border-hair rounded-xl px-5 py-4 transition-colors">
+          <label class="block font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Project Details</label>
+          <textarea required rows="4" placeholder="Tell me about your project..." class="w-full bg-transparent outline-none text-white placeholder:text-white/25 resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full py-4 bg-violet text-ink font-semibold rounded-xl hover:bg-violet-soft transition-colors">
+          Send Message
+        </button>
+        <p id="formNote" class="hidden text-center font-mono text-xs text-violet-soft pt-2">
+          Thanks — your message has been noted. I'll be in touch soon.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-hair py-10 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="font-display font-medium">LATA <span class="text-violet">DEVI</span></p>
+    <p class="font-mono text-[11px] text-white/35 tracking-widest">© 2026 LATA DEVI — ALL RIGHTS RESERVED</p>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+  menuBtn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('translate-x-full', !menuOpen);
+  });
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      menuOpen = false;
+      mobileMenu.classList.add('translate-x-full');
+    });
+  });
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Contact form (front-end only demo)
+  const form = document.getElementById('contactForm');
+  const note = document.getElementById('formNote');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    note.classList.remove('hidden');
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
